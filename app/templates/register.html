@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% block title %}Register — Finlytic{% endblock %}
+
+{% block extra_css %}
+<style>
+  .auth-wrapper {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  .auth-card {
+    background: #1E293B;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 460px;
+  }
+
+  .auth-logo {
+    background-color: #0F172A;
+    border-radius: 14px;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 1.5rem;
+  }
+
+  .auth-card h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 0.4rem;
+  }
+
+  .auth-card .subtitle {
+    text-align: center;
+    color: #94A3B8;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+  }
+
+  .form-label {
+    color: #CBD5E1;
+    font-size: 0.88rem;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+  }
+
+  .input-group-custom {
+    position: relative;
+    margin-bottom: 1.2rem;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748B;
+    font-size: 1rem;
+    z-index: 2;
+  }
+
+  .form-control-custom {
+    width: 100%;
+    background: #0F172A;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 0.75rem 1rem 0.75rem 2.8rem;
+    color: #fff;
+    font-size: 0.92rem;
+    font-family: 'Poppins', sans-serif;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+
+  .form-control-custom::placeholder { color: #475569; }
+
+  .form-control-custom:focus {
+    border-color: #10B981;
+    box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
+  }
+
+  .btn-submit {
+    width: 100%;
+    background: #10B981;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.85rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    margin-top: 0.5rem;
+  }
+
+  .btn-submit:hover {
+    background: #059669;
+    transform: translateY(-1px);
+  }
+
+  .auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #94A3B8;
+    font-size: 0.88rem;
+  }
+
+  .auth-footer a {
+    color: #10B981;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .auth-footer a:hover { text-decoration: underline; }
+
+  .field-error {
+    color: #F87171;
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+
+    <!-- Logo -->
+    <div class="auth-logo">
+      <i class="bi bi-graph-up-arrow text-white"></i>
+    </div>
+
+    <h2>Create an account</h2>
+    <p class="subtitle">Get started with Finlytic today</p>
+
+    <form method="POST" action="{{ url_for('auth.register') }}">
+      {{ form.hidden_tag() }}
+
+      <!-- Full Name -->
+      <div>
+        <label class="form-label">Full Name</label>
+        <div class="input-group-custom">
+          <i class="bi bi-person input-icon"></i>
+          {{ form.username(class="form-control-custom", placeholder="John Doe") }}
+        </div>
+        {% for err in form.username.errors %}
+          <p class="field-error"><i class="bi bi-exclamation-circle me-1"></i>{{ err }}</p>
+        {% endfor %}
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label class="form-label">Email</label>
+        <div class="input-group-custom">
+          <i class="bi bi-envelope input-icon"></i>
+          {{ form.email(class="form-control-custom", placeholder="name@example.com") }}
+        </div>
+        {% for err in form.email.errors %}
+          <p class="field-error"><i class="bi bi-exclamation-circle me-1"></i>{{ err }}</p>
+        {% endfor %}
+      </div>
+
+      <!-- Password -->
+      <div>
+        <label class="form-label">Password</label>
+        <div class="input-group-custom">
+          <i class="bi bi-lock input-icon"></i>
+          {{ form.password(class="form-control-custom", placeholder="Create a password") }}
+        </div>
+        {% for err in form.password.errors %}
+          <p class="field-error"><i class="bi bi-exclamation-circle me-1"></i>{{ err }}</p>
+        {% endfor %}
+      </div>
+
+      <!-- Confirm Password -->
+      <div>
+        <label class="form-label">Confirm Password</label>
+        <div class="input-group-custom">
+          <i class="bi bi-lock-fill input-icon"></i>
+          {{ form.confirm_password(class="form-control-custom", placeholder="Confirm your password") }}
+        </div>
+        {% for err in form.confirm_password.errors %}
+          <p class="field-error"><i class="bi bi-exclamation-circle me-1"></i>{{ err }}</p>
+        {% endfor %}
+      </div>
+
+      <button type="submit" class="btn-submit">Create Account</button>
+    </form>
+
+    <div class="auth-footer">
+      Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

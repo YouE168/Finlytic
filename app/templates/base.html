@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Finlytic{% endblock %}</title>
+
+  <!-- Poppins Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+
+  <style>
+    /* ── Core Variables ── */
+    :root {
+      --navy:   #0F172A;
+      --navy2:  #1E293B;
+      --emerald:#10B981;
+      --emerald-dark: #059669;
+      --text-muted: #94A3B8;
+      --white:  #FFFFFF;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--navy);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    main { flex: 1; }
+
+    /* ── Navbar ── */
+    .navbar {
+      background-color: var(--navy);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--white) !important;
+      text-decoration: none;
+    }
+
+    .navbar-brand .logo-icon {
+      background-color: var(--emerald);
+      border-radius: 10px;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .navbar-nav .nav-link {
+      color: var(--text-muted) !important;
+      font-weight: 500;
+      font-size: 0.95rem;
+      padding: 0.5rem 1rem !important;
+      position: relative;
+      transition: color 0.2s;
+    }
+
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link.active {
+      color: var(--emerald) !important;
+    }
+
+    .navbar-nav .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 1rem;
+      right: 1rem;
+      height: 2px;
+      background: var(--emerald);
+      border-radius: 2px;
+    }
+
+    .navbar-toggler {
+      border: none;
+      color: var(--white);
+      font-size: 1.4rem;
+    }
+
+    .navbar-toggler:focus { box-shadow: none; }
+
+    /* ── Buttons ── */
+    .btn-emerald {
+      background-color: var(--emerald);
+      color: var(--white);
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.4rem;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .btn-emerald:hover {
+      background-color: var(--emerald-dark);
+      color: var(--white);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline-light-custom {
+      background: transparent;
+      color: var(--white);
+      border: 1px solid rgba(255,255,255,0.3);
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 0.6rem 1.4rem;
+      transition: all 0.2s;
+    }
+
+    .btn-outline-light-custom:hover {
+      background: rgba(255,255,255,0.08);
+      color: var(--white);
+      transform: translateY(-1px);
+    }
+
+    /* ── Footer ── */
+    footer {
+      background-color: var(--navy);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 3rem 0 1.5rem;
+      margin-top: auto;
+    }
+
+    footer .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+    }
+
+    footer .footer-brand .logo-icon {
+      background-color: var(--emerald);
+      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    footer p, footer a {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+
+    footer a {
+      text-decoration: none;
+      transition: color 0.2s;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+
+    footer a:hover { color: var(--emerald); }
+
+    footer h6 {
+      color: var(--white);
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    footer .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      margin-top: 2rem;
+      padding-top: 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    footer .footer-bottom p {
+      margin: 0;
+      font-size: 0.82rem;
+    }
+
+    footer .social-links a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+      color: var(--text-muted);
+      margin-left: 0.4rem;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    footer .social-links a:hover {
+      background: var(--emerald);
+      color: var(--white);
+    }
+
+    /* ── Flash Messages ── */
+    .alert {
+      border-radius: 10px;
+      font-size: 0.9rem;
+      border: none;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--navy); }
+    ::-webkit-scrollbar-thumb { background: var(--navy2); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--emerald); }
+  </style>
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+  <!-- ── Navbar ── -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+
+      <a class="navbar-brand" href="{{ url_for('main.index') }}">
+        <div class="logo-icon">
+          <i class="bi bi-graph-up-arrow text-white"></i>
+        </div>
+        Finlytic
+      </a>
+
+      <button class="navbar-toggler" type="button"
+              data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <i class="bi bi-list text-white"></i>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav align-items-center gap-1">
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}"
+               href="{{ url_for('main.index') }}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'main.predict' %}active{% endif %}"
+               href="{{ url_for('main.predict') }}">Apply</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}"
+               href="{{ url_for('main.dashboard') }}">Dashboard</a>
+          </li>
+
+          {% if current_user.is_authenticated %}
+            <li class="nav-item ms-2">
+              <a class="btn btn-emerald" href="{{ url_for('auth.logout') }}">
+                <i class="bi bi-box-arrow-right me-1"></i>Logout
+              </a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link {% if request.endpoint == 'auth.login' %}active{% endif %}"
+                 href="{{ url_for('auth.login') }}">Login</a>
+            </li>
+            <li class="nav-item ms-2">
+              <a class="btn btn-emerald" href="{{ url_for('auth.register') }}">Register</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- ── Flash Messages ── -->
+  <div class="container mt-3">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show">
+            <i class="bi bi-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }} me-2"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <!-- ── Page Content ── -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div class="container">
+      <div class="row">
+
+        <!-- Brand col -->
+        <div class="col-lg-4 mb-4">
+          <div class="footer-brand">
+            <div class="logo-icon">
+              <i class="bi bi-graph-up-arrow text-white"></i>
+            </div>
+            Finlytic
+          </div>
+          <p>Smart Lending, Powered by Data. Making loan decisions faster and smarter with AI-driven analytics.</p>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="col-lg-2 col-6 mb-4">
+          <h6>Quick Links</h6>
+          <a href="{{ url_for('main.index') }}">Home</a>
+          <a href="{{ url_for('main.predict') }}">Apply for Loan</a>
+          <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
+        </div>
+
+        <!-- Account -->
+        <div class="col-lg-2 col-6 mb-4">
+          <h6>Account</h6>
+          <a href="{{ url_for('auth.login') }}">Login</a>
+          <a href="{{ url_for('auth.register') }}">Register</a>
+        </div>
+
+        <!-- Built by -->
+        <div class="col-lg-4 mb-4">
+          <h6>Built By</h6>
+          <p class="mb-1">You E Kry — Computer Science Student</p>
+          <p>Passionate about AI and Fintech.</p>
+          <div class="social-links mt-2">
+            <a href="https://github.com/" target="_blank" title="GitHub">
+              <i class="bi bi-github"></i>
+            </a>
+            <a href="https://linkedin.com/" target="_blank" title="LinkedIn">
+              <i class="bi bi-linkedin"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer Bottom -->
+      <div class="footer-bottom">
+        <p>© 2025 Finlytic. Built by <span style="color: var(--emerald);">You E Kry</span></p>
+        <p>AI-Powered Loan Prediction Platform</p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  {% block extra_js %}{% endblock %}
+
+</body>
+</html>

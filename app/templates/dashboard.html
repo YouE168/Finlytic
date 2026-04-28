@@ -1,0 +1,487 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — Finlytic{% endblock %}
+
+{% block extra_css %}
+<style>
+  .dashboard-wrapper {
+    padding: 2.5rem 0 4rem;
+  }
+
+  /* ── Page Header ── */
+  .page-header { margin-bottom: 2rem; }
+  .page-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.3rem;
+  }
+  .page-header p { color: #94A3B8; font-size: 0.95rem; }
+
+  /* ── Stat Cards ── */
+  .stat-card {
+    background: #1E293B;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    height: 100%;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+
+  .stat-card .stat-label {
+    color: #94A3B8;
+    font-size: 0.82rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-card .stat-value {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.4rem;
+  }
+
+  .stat-card .stat-change {
+    font-size: 0.78rem;
+    font-weight: 500;
+  }
+
+  .stat-card .stat-change.up { color: #10B981; }
+  .stat-card .stat-change.down { color: #F87171; }
+
+  .stat-icon {
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #94A3B8;
+    flex-shrink: 0;
+  }
+
+  /* ── Chart Cards ── */
+  .chart-card {
+    background: #1E293B;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 1.5rem;
+    height: 100%;
+    transition: border-color 0.2s;
+  }
+  .chart-card:hover {
+    border-color: rgba(16, 185, 129, 0.2);
+  }
+
+  .chart-card .chart-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.3rem;
+  }
+
+  .chart-card .chart-subtitle {
+    color: #94A3B8;
+    font-size: 0.82rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .chart-legend {
+    display: flex;
+    gap: 1.2rem;
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: #94A3B8;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+  }
+
+  /* ── Metric Cards (Precision/Recall/F1) ── */
+  .metric-card {
+    background: #1E293B;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 1.5rem;
+    height: 100%;
+  }
+
+  .metric-card .metric-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.2rem;
+  }
+
+  .metric-card .metric-desc {
+    color: #94A3B8;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .metric-card .metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+  }
+  
+  /* Different colors for each metric */
+  .metric-card:nth-child(1) .metric-value { color: #3B82F6; }  /* Precision - Blue */
+  .metric-card:nth-child(2) .metric-value { color: #10B981; }  /* Recall - Green */
+  .metric-card:nth-child(3) .metric-value { color: #8B5CF6; }  /* F1 Score - Purple */
+
+  .metric-bar-bg {
+    background: rgba(255,255,255,0.07);
+    border-radius: 99px;
+    height: 6px;
+    overflow: hidden;
+  }
+
+  .metric-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1s ease;
+  }
+  .metric-card:nth-child(1) .metric-bar-fill { background: #3B82F6; }  /* Blue */
+  .metric-card:nth-child(2) .metric-bar-fill { background: #10B981; }  /* Green */
+  .metric-card:nth-child(3) .metric-bar-fill { background: #8B5CF6; }  /* Purple */
+
+  /* ── Section titles ── */
+  .section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container dashboard-wrapper">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>Analytics Dashboard</h1>
+    <p>Real-time insights into loan predictions and model performance</p>
+  </div>
+
+  <!-- ── Stat Cards Row ── -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+      <div class="stat-card">
+        <div>
+          <p class="stat-label">Total Applications</p>
+          <p class="stat-value">{{ stats.total or '—' }}</p>
+          <span class="stat-change up">
+            <i class="bi bi-arrow-up-right"></i> +12.5% vs last month
+          </span>
+        </div>
+        <div class="stat-icon"><i class="bi bi-people"></i></div>
+      </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <div class="stat-card">
+        <div>
+          <p class="stat-label">Approval Rate</p>
+          <p class="stat-value">{{ stats.approval_rate or '—' }}%</p>
+          <span class="stat-change up">
+            <i class="bi bi-arrow-up-right"></i> +3.2% vs last month
+          </span>
+        </div>
+        <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
+      </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <div class="stat-card">
+        <div>
+          <p class="stat-label">Rejection Rate</p>
+          <p class="stat-value">{{ stats.rejection_rate or '—' }}%</p>
+          <span class="stat-change down">
+            <i class="bi bi-arrow-down-right"></i> -3.2% vs last month
+          </span>
+        </div>
+        <div class="stat-icon"><i class="bi bi-x-circle"></i></div>
+      </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <div class="stat-card">
+        <div>
+          <p class="stat-label">Model Accuracy</p>
+          <p class="stat-value">{{ stats.accuracy or '—' }}%</p>
+          <span class="stat-change up">
+            <i class="bi bi-arrow-up-right"></i> +0.5% vs last month
+          </span>
+        </div>
+        <div class="stat-icon"><i class="bi bi-bullseye"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Charts Row 1: Donut + Bar ── -->
+  <div class="row g-3 mb-4">
+
+    <!-- Approval Rate Donut -->
+    <div class="col-lg-5">
+      <div class="chart-card">
+        <p class="chart-title">Approval Rate Distribution</p>
+        <p class="chart-subtitle">Overall loan approval vs rejection breakdown</p>
+        <div style="position:relative; height:260px;">
+          <canvas id="donutChart"></canvas>
+        </div>
+        <div class="chart-legend">
+          <span><span class="legend-dot" style="background:#10B981"></span>Approved ✅</span>
+          <span><span class="legend-dot" style="background:#EF4444"></span>Rejected ❌</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Income vs Approval Bar -->
+    <div class="col-lg-7">
+      <div class="chart-card">
+        <p class="chart-title">Income vs Approval</p>
+        <p class="chart-subtitle">Approval rates across different income brackets</p>
+        <div style="position:relative; height:260px;">
+          <canvas id="incomeChart"></canvas>
+        </div>
+        <div class="chart-legend">
+          <span><span class="legend-dot" style="background:#10B981"></span>Approved ✅</span>
+          <span><span class="legend-dot" style="background:#F59E0B"></span>Rejected ❌</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Charts Row 2: Credit Score Distribution ── -->
+  <div class="row g-3 mb-4">
+    <div class="col-12">
+      <div class="chart-card">
+        <p class="chart-title">Credit Score Distribution</p>
+        <p class="chart-subtitle">Distribution of applications by credit history status</p>
+        <div style="position:relative; height:200px;">
+          <canvas id="creditChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Model Performance Metrics ── -->
+  <div class="row g-3">
+    <div class="col-12 mb-1">
+      <p class="section-title">Model Performance Metrics</p>
+    </div>
+
+    <div class="col-md-4">
+      <div class="metric-card">
+        <p class="metric-label">Precision</p>
+        <p class="metric-desc">True positive rate — When we say "Approved", we're right this often</p>
+        <p class="metric-value">{{ stats.precision or '—' }}%</p>
+        <div class="metric-bar-bg">
+          <div class="metric-bar-fill" data-width="{{ stats.precision or 0 }}"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="metric-card">
+        <p class="metric-label">Recall</p>
+        <p class="metric-desc">Sensitivity — We catch this many truly qualified applicants</p>
+        <p class="metric-value">{{ stats.recall or '—' }}%</p>
+        <div class="metric-bar-bg">
+          <div class="metric-bar-fill" data-width="{{ stats.recall or 0 }}"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="metric-card">
+        <p class="metric-label">F1 Score</p>
+        <p class="metric-desc">Harmonic mean of precision and recall — Overall quality</p>
+        <p class="metric-value">{{ stats.f1 or '—' }}%</p>
+        <div class="metric-bar-bg">
+          <div class="metric-bar-fill" data-width="{{ stats.f1 or 0 }}"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{# ── Inject Flask data as plain JSON into hidden vars ── #}
+<script id="chart-data" type="application/json">
+{
+  "approved":        {{ chart_data.approved        | default(68.9) }},
+  "rejected":        {{ chart_data.rejected         | default(31.1) }},
+  "income_approved": {{ chart_data.income_approved  | default([320, 810, 1450, 1680, 1550]) | tojson }},
+  "income_rejected": {{ chart_data.income_rejected  | default([180, 290, 310, 220, 130])    | tojson }},
+  "credit_approved": {{ chart_data.credit_approved  | default([89, 7800])                   | tojson }},
+  "credit_rejected": {{ chart_data.credit_rejected  | default([482, 1800])                  | tojson }}
+}
+</script>
+
+<script>
+  // Read injected data safely
+  const d = JSON.parse(document.getElementById('chart-data').textContent);
+  
+  // Color Palette - More vibrant colors
+  const colors = {
+    approved: '#10B981',      // Emerald Green
+    rejected: '#EF4444',      // Red
+    rejectedBar: '#F59E0B',   // Amber for income chart rejection
+    approvedLight: '#34D399',  // Lighter green
+    creditGood: '#10B981',    // Green for good credit
+    creditBad: '#F87171',     // Light red for bad credit
+    precision: '#3B82F6',     // Blue
+    recall: '#10B981',        // Green
+    f1: '#8B5CF6'             // Purple
+  };
+
+  Chart.defaults.color = '#94A3B8';
+  Chart.defaults.font.family = 'Poppins';
+
+  // ── Donut Chart (Approved vs Rejected) ──
+  new Chart(document.getElementById('donutChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Approved', 'Rejected'],
+      datasets: [{
+        data: [d.approved, d.rejected],
+        backgroundColor: [colors.approved, colors.rejected],
+        borderWidth: 0,
+        hoverOffset: 8,
+        cutout: '65%'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { 
+          callbacks: { 
+            label: ctx => ` ${ctx.label}: ${ctx.parsed}%` 
+          },
+          backgroundColor: '#1E293B',
+          titleColor: '#fff',
+          bodyColor: '#94A3B8'
+        }
+      }
+    }
+  });
+
+  // ── Income vs Approval Bar Chart ──
+  new Chart(document.getElementById('incomeChart'), {
+    type: 'bar',
+    data: {
+      labels: ['$0-2K', '$2K-4K', '$4K-6K', '$6K-8K', '$8K+'],
+      datasets: [
+        { 
+          label: 'Approved', 
+          data: d.income_approved, 
+          backgroundColor: colors.approved, 
+          borderRadius: 6,
+          barPercentage: 0.65,
+          categoryPercentage: 0.8
+        },
+        { 
+          label: 'Rejected', 
+          data: d.income_rejected, 
+          backgroundColor: colors.rejectedBar, 
+          borderRadius: 6,
+          barPercentage: 0.65,
+          categoryPercentage: 0.8
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { 
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1E293B',
+          titleColor: '#fff',
+          bodyColor: '#94A3B8'
+        }
+      },
+      scales: {
+        x: { 
+          grid: { color: 'rgba(255,255,255,0.04)' }, 
+          ticks: { color: '#64748B', font: { weight: '500' } }
+        },
+        y: { 
+          grid: { color: 'rgba(255,255,255,0.04)' }, 
+          ticks: { color: '#64748B' }
+        }
+      }
+    }
+  });
+
+  // ── Credit Score Distribution Horizontal Bar ──
+  new Chart(document.getElementById('creditChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Bad Credit (0)', 'Good Credit (1)'],
+      datasets: [
+        { 
+          label: 'Approved', 
+          data: d.credit_approved, 
+          backgroundColor: colors.approved, 
+          borderRadius: 6,
+          barPercentage: 0.7
+        },
+        { 
+          label: 'Rejected', 
+          data: d.credit_rejected, 
+          backgroundColor: colors.rejected, 
+          borderRadius: 6,
+          barPercentage: 0.7
+        }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { 
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1E293B',
+          titleColor: '#fff',
+          bodyColor: '#94A3B8'
+        }
+      },
+      scales: {
+        x: { 
+          grid: { color: 'rgba(255,255,255,0.04)' }, 
+          ticks: { color: '#64748B' }
+        },
+        y: { 
+          grid: { display: false }, 
+          ticks: { color: '#CBD5E1', font: { weight: '500', size: 13 } }
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}

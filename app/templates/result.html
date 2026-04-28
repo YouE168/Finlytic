@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+{% block title %}Result — Finlytic{% endblock %}
+
+{% block extra_css %}
+<style>
+  .result-wrapper {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+  }
+
+  .result-card {
+    background: #1E293B;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 20px;
+    padding: 3rem 2.5rem;
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+  }
+
+  /* ── Status Icon ── */
+  .status-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    margin: 0 auto 1.5rem;
+  }
+
+  .status-icon.approved {
+    background: rgba(16,185,129,0.15);
+    color: #10B981;
+    border: 2px solid rgba(16,185,129,0.3);
+  }
+
+  .status-icon.rejected {
+    background: rgba(248,113,113,0.12);
+    color: #F87171;
+    border: 2px solid rgba(248,113,113,0.3);
+  }
+
+  /* ── Status Badge ── */
+  .status-badge {
+    display: inline-block;
+    border-radius: 99px;
+    padding: 0.4rem 1.4rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .status-badge.approved { background: rgba(16,185,129,0.15); color: #10B981; }
+  .status-badge.rejected { background: rgba(248,113,113,0.12); color: #F87171; }
+
+  .result-card h2 {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+  .result-card .result-msg {
+    color: #94A3B8;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  /* ── Probability Bar ── */
+  .prob-section { margin-bottom: 2rem; }
+
+  .prob-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .prob-label span:first-child { color: #CBD5E1; font-weight: 500; }
+  .prob-label span:last-child  { font-weight: 700; color: #10B981; }
+
+  .prob-bar-bg {
+    background: rgba(255,255,255,0.07);
+    border-radius: 99px;
+    height: 10px;
+    overflow: hidden;
+  }
+
+  .prob-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1.2s ease;
+  }
+
+  .prob-bar-fill.approved { background: linear-gradient(90deg, #059669, #10B981); }
+  .prob-bar-fill.rejected { background: linear-gradient(90deg, #DC2626, #F87171); }
+
+  /* ── Summary Grid ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+    text-align: left;
+  }
+
+  .summary-item {
+    background: #0F172A;
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+  }
+
+  .summary-item .s-label { color: #64748B; font-size: 0.75rem; margin-bottom: 0.2rem; }
+  .summary-item .s-value { color: #fff; font-size: 0.9rem; font-weight: 600; }
+
+  /* ── Action Buttons ── */
+  .result-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  .btn-action {
+    flex: 1;
+    border-radius: 10px;
+    padding: 0.75rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-action-primary {
+    background: #10B981;
+    color: #fff;
+  }
+
+  .btn-action-primary:hover { background: #059669; color: #fff; transform: translateY(-1px); }
+
+  .btn-action-secondary {
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .btn-action-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="result-wrapper">
+  <div class="result-card">
+
+    <!-- Status Icon -->
+    <div class="status-icon {{ 'approved' if result == 'Approved' else 'rejected' }}">
+      <i class="bi bi-{{ 'check-lg' if result == 'Approved' else 'x-lg' }}"></i>
+    </div>
+
+    <!-- Badge -->
+    <div class="status-badge {{ 'approved' if result == 'Approved' else 'rejected' }}">
+      {{ result }}
+    </div>
+
+    <!-- Heading -->
+    <h2>Loan {{ result }}</h2>
+    <p class="result-msg">
+      {% if result == 'Approved' %}
+        Congratulations! Based on your application details and our AI model analysis, your loan is likely to be approved.
+      {% else %}
+        Based on your application details, our AI model predicts your loan may not be approved at this time. Consider improving your credit history or increasing your income.
+      {% endif %}
+    </p>
+
+    <!-- Probability Bar -->
+    <div class="prob-section">
+      <div class="prob-label">
+        <span>Confidence Score</span>
+        <span>{{ probability }}%</span>
+      </div>
+      <div class="prob-bar-bg">
+        <div class="prob-bar-fill {{ 'approved' if result == 'Approved' else 'rejected' }}"
+             data-width="{{ probability }}"
+             id="probBar"></div>
+      </div>
+    </div>
+
+    <!-- Summary Grid -->
+    <div class="summary-grid">
+      <div class="summary-item">
+        <p class="s-label">Applicant Income</p>
+        <p class="s-value">${{ '{:,}'.format(applicant_income) }}</p>
+      </div>
+      <div class="summary-item">
+        <p class="s-label">Loan Amount</p>
+        <p class="s-value">${{ '{:,}'.format(loan_amount) }}</p>
+      </div>
+      <div class="summary-item">
+        <p class="s-label">Credit History</p>
+        <p class="s-value">{{ 'Good' if credit_history == 1 else 'Poor' }}</p>
+      </div>
+      <div class="summary-item">
+        <p class="s-label">Loan Term</p>
+        <p class="s-value">{{ loan_term }} months</p>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="result-actions">
+      <a href="{{ url_for('main.predict') }}" class="btn-action btn-action-secondary">
+        <i class="bi bi-arrow-left"></i> New Application
+      </a>
+      <a href="{{ url_for('main.dashboard') }}" class="btn-action btn-action-primary">
+        <i class="bi bi-bar-chart-line"></i> View Dashboard
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
