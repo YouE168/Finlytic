@@ -1,17 +1,38 @@
+<!-- 
+  FILE: predict.html
+  PURPOSE: Loan Application Form Page - Core functionality of Finlytic
+  DESCRIPTION: Users enter their financial and personal information.
+               When submitted, the data is sent to the backend AI model
+               for loan eligibility prediction.
+-->
+
 {% extends 'base.html' %}
+
+<!-- Override the page title in the browser tab -->
 {% block title %}Apply — Finlytic{% endblock %}
 
+<!-- Add page-specific CSS styles -->
 {% block extra_css %}
 <style>
+  /* ============================================================
+     PREDICTION/APPLICATION PAGE STYLES
+     Contains the loan application form with multiple fields
+     ============================================================ */
+
+  /* Main container spacing */
   .predict-wrapper {
     padding: 3rem 0 5rem;
   }
 
+  /* ============================================================
+     PAGE HEADER SECTION
+     ============================================================ */
   .predict-header {
     text-align: center;
     margin-bottom: 2.5rem;
   }
 
+  /* Green circle behind the header icon */
   .predict-header .header-icon {
     background: rgba(16,185,129,0.12);
     border-radius: 14px;
@@ -34,14 +55,16 @@
 
   .predict-header p { color: #94A3B8; font-size: 0.92rem; }
 
-  /* ── Form Card ── */
+  /* ============================================================
+     FORM CARD - Main container for the application form
+     ============================================================ */
   .form-card {
-    background: #1E293B;
+    background: #1E293B;                     /* Dark card background */
     border: 1px solid rgba(255,255,255,0.07);
     border-radius: 16px;
     padding: 2rem;
-    max-width: 700px;
-    margin: 0 auto;
+    max-width: 700px;                        /* Form width limit */
+    margin: 0 auto;                          /* Centers the form horizontally */
   }
 
   .form-card .card-title {
@@ -57,17 +80,22 @@
     margin-bottom: 1.8rem;
   }
 
+  /* ============================================================
+     SECTION DIVIDERS
+     Separates Personal Info, Financial Info, Loan Details
+     ============================================================ */
   .section-label {
     font-size: 0.78rem;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #10B981;
+    text-transform: uppercase;               /* ALL CAPS */
+    letter-spacing: 0.08em;                 /* Spacing between letters */
+    color: #10B981;                         /* Green color */
     margin: 1.5rem 0 1rem;
     border-bottom: 1px solid rgba(16,185,129,0.15);
     padding-bottom: 0.4rem;
   }
 
+  /* Form field labels */
   .form-label {
     color: #CBD5E1;
     font-size: 0.85rem;
@@ -76,10 +104,13 @@
     display: block;
   }
 
+  /* ============================================================
+     CUSTOM FORM INPUTS (Text inputs and Select dropdowns)
+     ============================================================ */
   .form-control-custom,
   .form-select-custom {
     width: 100%;
-    background: #0F172A;
+    background: #0F172A;                     /* Dark input background */
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 10px;
     padding: 0.72rem 1rem;
@@ -88,36 +119,48 @@
     font-family: 'Poppins', sans-serif;
     outline: none;
     transition: border-color 0.2s;
-    appearance: none;
+    appearance: none;                        /* Removes default browser styling */
     -webkit-appearance: none;
   }
 
+  /* Custom dropdown arrow for select inputs */
   .form-select-custom {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748B' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 12px center;
+    background-position: right 12px center;  /* Arrow on the right side */
     padding-right: 2.2rem;
     cursor: pointer;
   }
 
+  /* Placeholder text color */
   .form-control-custom::placeholder { color: #475569; }
+  
+  /* Dropdown option background */
   .form-select-custom option { background: #1E293B; color: #fff; }
 
+  /* Focus effect - green border when user clicks into input */
   .form-control-custom:focus,
   .form-select-custom:focus {
     border-color: #10B981;
     box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
   }
 
+  /* ============================================================
+     ERROR MESSAGE STYLES
+     Shows validation errors below form fields
+     ============================================================ */
   .field-error {
-    color: #F87171;
+    color: #F87171;           /* Red color for errors */
     font-size: 0.78rem;
     margin-top: 0.3rem;
   }
 
+  /* ============================================================
+     SUBMIT BUTTON
+     ============================================================ */
   .btn-predict {
     width: 100%;
-    background: #10B981;
+    background: #10B981;        /* Emerald green */
     color: #fff;
     border: none;
     border-radius: 10px;
@@ -135,8 +178,8 @@
   }
 
   .btn-predict:hover {
-    background: #059669;
-    transform: translateY(-1px);
+    background: #059669;        /* Darker green on hover */
+    transform: translateY(-1px); /* Slight lift effect */
   }
 </style>
 {% endblock %}
@@ -144,45 +187,68 @@
 {% block content %}
 <div class="container predict-wrapper">
 
-  <!-- Header -->
+  <!-- ============================================================
+       PAGE HEADER
+       ============================================================ -->
   <div class="predict-header">
     <div class="header-icon"><i class="bi bi-file-earmark-text"></i></div>
     <h1>Loan Application</h1>
     <p>Fill in your details to get an instant loan eligibility prediction</p>
   </div>
 
-  <!-- Form Card -->
+  <!-- ============================================================
+       LOAN APPLICATION FORM
+       Uses WTForms for validation and rendering
+       ============================================================ -->
   <div class="form-card">
     <p class="card-title">Application Details</p>
     <p class="card-subtitle">Please provide accurate information for better prediction results</p>
 
+    <!-- 
+      FORM CONFIGURATION
+      ============================================================
+      - method="POST": Sends data securely (not visible in URL)
+      - action="{{ url_for('main.predict') }}": Submits to the same page
+      - form.hidden_tag(): Adds CSRF token for security
+    -->
     <form method="POST" action="{{ url_for('main.predict') }}">
       {{ form.hidden_tag() }}
 
-      <!-- ── Personal Information ── -->
+      <!-- ============================================
+           SECTION 1: PERSONAL INFORMATION
+           ============================================ -->
       <p class="section-label">Personal Information</p>
 
       <div class="row g-3">
+        <!-- Gender Dropdown -->
         <div class="col-md-6">
           <label class="form-label">Gender</label>
           {{ form.gender(class="form-select-custom") }}
           {% for e in form.gender.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
         </div>
+
+        <!-- Married Status Dropdown -->
         <div class="col-md-6">
           <label class="form-label">Married</label>
           {{ form.married(class="form-select-custom") }}
           {% for e in form.married.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
         </div>
+
+        <!-- Number of Dependents Dropdown -->
         <div class="col-md-6">
           <label class="form-label">Dependents</label>
           {{ form.dependents(class="form-select-custom") }}
           {% for e in form.dependents.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
         </div>
+
+        <!-- Education Level Dropdown -->
         <div class="col-md-6">
           <label class="form-label">Education</label>
           {{ form.education(class="form-select-custom") }}
           {% for e in form.education.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
         </div>
+
+        <!-- Self Employed Status Dropdown -->
         <div class="col-md-6">
           <label class="form-label">Self Employed</label>
           {{ form.self_employed(class="form-select-custom") }}
@@ -190,20 +256,27 @@
         </div>
       </div>
 
-      <!-- ── Financial Information ── -->
+      <!-- ============================================
+           SECTION 2: FINANCIAL INFORMATION
+           ============================================ -->
       <p class="section-label">Financial Information</p>
 
       <div class="row g-3">
+        <!-- Applicant Monthly Income -->
         <div class="col-md-6">
           <label class="form-label">Applicant Income ($/month)</label>
           {{ form.applicant_income(class="form-control-custom", placeholder="e.g., 5000") }}
           {% for e in form.applicant_income.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
         </div>
+
+        <!-- Coapplicant Monthly Income -->
         <div class="col-md-6">
           <label class="form-label">Coapplicant Income ($/month)</label>
           {{ form.coapplicant_income(class="form-control-custom", placeholder="e.g., 2000") }}
           {% for e in form.coapplicant_income.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
         </div>
+
+        <!-- Credit History Dropdown (1 = Good, 0 = Poor) -->
         <div class="col-md-6">
           <label class="form-label">Credit History</label>
           {{ form.credit_history(class="form-select-custom") }}
@@ -211,20 +284,27 @@
         </div>
       </div>
 
-      <!-- ── Loan Details ── -->
+      <!-- ============================================
+           SECTION 3: LOAN DETAILS
+           ============================================ -->
       <p class="section-label">Loan Details</p>
 
       <div class="row g-3">
+        <!-- Requested Loan Amount -->
         <div class="col-md-6">
           <label class="form-label">Loan Amount ($)</label>
           {{ form.loan_amount(class="form-control-custom", placeholder="e.g., 150000") }}
           {% for e in form.loan_amount.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
         </div>
+
+        <!-- Loan Term in Months (360, 180, 120, etc.) -->
         <div class="col-md-6">
           <label class="form-label">Loan Term (months)</label>
           {{ form.loan_amount_term(class="form-select-custom") }}
           {% for e in form.loan_amount_term.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
         </div>
+
+        <!-- Property Area Type (Urban, Semi-Urban, Rural) -->
         <div class="col-md-6">
           <label class="form-label">Property Area</label>
           {{ form.property_area(class="form-select-custom") }}
@@ -232,6 +312,10 @@
         </div>
       </div>
 
+      <!-- ============================================
+           SUBMIT BUTTON
+           Sends form data to backend AI model
+           ============================================ -->
       <button type="submit" class="btn-predict">
         <i class="bi bi-cpu"></i> Predict My Loan
       </button>

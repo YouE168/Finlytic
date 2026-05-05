@@ -1,34 +1,48 @@
+<!-- 
+  FILE: index.html
+  PURPOSE: Landing page (Homepage) for Finlytic
+  DESCRIPTION: This is the first page users see. It introduces the application,
+               explains the benefits, and encourages users to try the loan prediction.
+-->
+
 {% extends 'base.html' %}
+
+<!-- Override the page title in the browser tab -->
 {% block title %}Finlytic — Smart Lending, Powered by Data{% endblock %}
 
+<!-- Add page-specific CSS styles -->
 {% block extra_css %}
 <style>
-  /* ── Hero ── */
+  /* ============================================================
+     HERO SECTION - Main landing area (top of page)
+     ============================================================ */
   .hero {
-    min-height: 90vh;
+    min-height: 90vh;           /* Takes up 90% of viewport height */
     display: flex;
-    align-items: center;
+    align-items: center;        /* Vertically centers content */
     position: relative;
-    overflow: hidden;
+    overflow: hidden;           /* Hides decorative gradients that go outside */
     padding: 5rem 0;
   }
 
+  /* Decorative Background Glow Effects (green circles) */
   .hero::before {
     content: '';
     position: absolute;
     inset: 0;
     background: radial-gradient(ellipse at 60% 40%, rgba(16,185,129,0.12) 0%, transparent 60%),
                 radial-gradient(ellipse at 20% 80%, rgba(16,185,129,0.07) 0%, transparent 50%);
-    pointer-events: none;
+    pointer-events: none;       /* Allows clicking through the gradient to buttons */
   }
 
+  /* Small Badge Above Main Heading ("AI-Powered Loan Prediction") */
   .hero-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     background: rgba(16,185,129,0.12);
     border: 1px solid rgba(16,185,129,0.3);
-    border-radius: 99px;
+    border-radius: 99px;        /* Pill shape */
     padding: 0.35rem 1rem;
     font-size: 0.8rem;
     color: #10B981;
@@ -36,16 +50,19 @@
     margin-bottom: 1.5rem;
   }
 
+  /* Main Headline - responsive font size */
   .hero h1 {
-    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-size: clamp(2.4rem, 5vw, 3.8rem);  /* Min 2.4rem, scales up to 3.8rem */
     font-weight: 800;
     line-height: 1.15;
     margin-bottom: 1.2rem;
     color: #fff;
   }
 
+  /* Green highlight on "Powered by Data" */
   .hero h1 span { color: #10B981; }
 
+  /* Subheading paragraph */
   .hero p {
     font-size: 1.05rem;
     color: #94A3B8;
@@ -54,8 +71,10 @@
     margin-bottom: 2rem;
   }
 
+  /* Button Container */
   .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
 
+  /* Primary CTA Button (Green with pulsing animation) */
   .btn-hero-primary {
     background: #10B981;
     color: #fff;
@@ -70,7 +89,7 @@
     align-items: center;
     gap: 8px;
     transition: background 0.2s, transform 0.2s;
-    animation: pulse-btn 2.5s infinite;
+    animation: pulse-btn 2.5s infinite;  /* Attention-grabbing pulse */
   }
 
   .btn-hero-primary:hover {
@@ -79,11 +98,13 @@
     transform: translateY(-2px);
   }
 
+  /* Pulsing animation for primary button */
   @keyframes pulse-btn {
     0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
     50%       { box-shadow: 0 0 0 10px rgba(16,185,129,0); }
   }
 
+  /* Secondary CTA Button (Outline style) */
   .btn-hero-secondary {
     background: rgba(255,255,255,0.06);
     color: #fff;
@@ -103,7 +124,10 @@
     transform: translateY(-2px);
   }
 
-  /* Floating stat cards */
+  /* ============================================================
+     FLOATING STATS CARDS (Right side of hero on desktop)
+     Shows animated cards with Accuracy and Application counts
+     ============================================================ */
   .hero-stats {
     display: flex;
     flex-direction: column;
@@ -116,15 +140,17 @@
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 14px;
     padding: 1rem 1.4rem;
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);     /* Glassmorphism effect */
     display: flex;
     align-items: center;
     gap: 12px;
     animation: float 4s ease-in-out infinite;
   }
 
+  /* Second card floats with delay for staggered animation */
   .float-card:nth-child(2) { animation-delay: 1.5s; }
 
+  /* Floating animation - moves up and down gently */
   @keyframes float {
     0%, 100% { transform: translateY(0); }
     50%       { transform: translateY(-8px); }
@@ -146,16 +172,21 @@
   .float-card .fc-label { color: #94A3B8; font-size: 0.75rem; }
   .float-card .fc-value { color: #fff; font-weight: 700; font-size: 1.1rem; }
 
-  /* ── Why Choose Section ── */
+  /* ============================================================
+     WHY CHOOSE FINLYTIC SECTION
+     Three feature cards explaining the app's value
+     ============================================================ */
   .why-section {
     padding: 5rem 0;
     border-top: 1px solid rgba(255,255,255,0.06);
   }
 
+  /* Centered section header */
   .section-header { text-align: center; margin-bottom: 3rem; }
   .section-header h2 { font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 0.6rem; }
   .section-header p  { color: #94A3B8; font-size: 0.95rem; max-width: 560px; margin: 0 auto; }
 
+  /* Individual feature card */
   .feature-card {
     background: #1E293B;
     border: 1px solid rgba(255,255,255,0.07);
@@ -166,10 +197,11 @@
   }
 
   .feature-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(16,185,129,0.3);
+    transform: translateY(-4px);           /* Lifts card on hover */
+    border-color: rgba(16,185,129,0.3);   /* Green border on hover */
   }
 
+  /* Icon container with green circle background */
   .feature-icon {
     background: rgba(16,185,129,0.1);
     border-radius: 12px;
@@ -186,6 +218,7 @@
   .feature-card h5 { font-weight: 700; color: #fff; margin-bottom: 0.6rem; }
   .feature-card p  { color: #94A3B8; font-size: 0.88rem; line-height: 1.6; margin-bottom: 1rem; }
 
+  /* Checkmark list items inside feature cards */
   .feature-check {
     color: #10B981;
     font-size: 0.82rem;
@@ -195,12 +228,16 @@
     margin-bottom: 0.3rem;
   }
 
-  /* ── Trust Section ── */
+  /* ============================================================
+     TRUST SECTION + CALL TO ACTION
+     Builds credibility and encourages action
+     ============================================================ */
   .trust-section {
     padding: 5rem 0;
     border-top: 1px solid rgba(255,255,255,0.06);
   }
 
+  /* Trust list items (security, speed, insights) */
   .trust-list { list-style: none; padding: 0; margin: 0; }
   .trust-list li {
     display: flex;
@@ -225,6 +262,7 @@
   .trust-list h6 { color: #fff; font-weight: 600; margin-bottom: 0.2rem; font-size: 0.95rem; }
   .trust-list p  { color: #94A3B8; font-size: 0.84rem; margin: 0; }
 
+  /* Call to Action Box (right column) */
   .cta-box {
     background: #1E293B;
     border: 1px solid rgba(255,255,255,0.08);
@@ -236,7 +274,10 @@
   .cta-box h3 { font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 0.6rem; }
   .cta-box p  { color: #94A3B8; font-size: 0.9rem; margin-bottom: 1.5rem; }
 
-  /* ── Meet Developer ── */
+  /* ============================================================
+     MEET THE DEVELOPER SECTION
+     Personal branding and portfolio links
+     ============================================================ */
   .dev-section {
     padding: 5rem 0;
     border-top: 1px solid rgba(255,255,255,0.06);
@@ -263,6 +304,7 @@
   .dev-section .dev-role { color: #10B981; font-size: 0.9rem; font-weight: 500; margin-bottom: 1rem; }
   .dev-section .dev-bio  { color: #94A3B8; font-size: 0.9rem; max-width: 480px; margin: 0 auto 1.5rem; line-height: 1.7; }
 
+  /* Developer action buttons */
   .dev-btns { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
 
   .btn-dev {
@@ -298,10 +340,15 @@
 
 {% block content %}
 
-  <!-- ── Hero ── -->
+  <!-- ============================================================
+       HERO SECTION
+       Main value proposition with two call-to-action buttons
+       ============================================================ -->
   <section class="hero">
     <div class="container">
       <div class="row align-items-center g-5">
+        
+        <!-- LEFT COLUMN: Text and Buttons -->
         <div class="col-lg-6">
           <div class="hero-badge">
             <i class="bi bi-stars"></i> AI-Powered Loan Prediction
@@ -309,15 +356,18 @@
           <h1>Smart Lending,<br><span>Powered by Data</span></h1>
           <p>Get instant loan eligibility predictions using our advanced AI model. Make informed decisions with data-driven insights and transparent analytics.</p>
           <div class="hero-btns">
+            <!-- Primary CTA - goes to prediction form -->
             <a href="{{ url_for('main.predict') }}" class="btn-hero-primary">
               Check Your Loan <i class="bi bi-arrow-right"></i>
             </a>
+            <!-- Secondary CTA - goes to analytics dashboard -->
             <a href="{{ url_for('main.dashboard') }}" class="btn-hero-secondary">
               View Dashboard
             </a>
           </div>
         </div>
 
+        <!-- RIGHT COLUMN: Animated Stats Cards (Desktop only) -->
         <div class="col-lg-6 d-none d-lg-flex justify-content-end">
           <div class="hero-stats">
             <div class="float-card">
@@ -340,7 +390,10 @@
     </div>
   </section>
 
-  <!-- ── Why Choose Finlytic ── -->
+  <!-- ============================================================
+       WHY CHOOSE FINLYTIC SECTION
+       Three feature cards explaining the app's value
+       ============================================================ -->
   <section class="why-section">
     <div class="container">
       <div class="section-header">
@@ -349,6 +402,7 @@
       </div>
       <div class="row g-4">
 
+        <!-- Feature Card 1: AI Prediction -->
         <div class="col-md-4">
           <div class="feature-card">
             <div class="feature-icon"><i class="bi bi-cpu"></i></div>
@@ -360,6 +414,7 @@
           </div>
         </div>
 
+        <!-- Feature Card 2: Analytics Dashboard -->
         <div class="col-md-4">
           <div class="feature-card">
             <div class="feature-icon"><i class="bi bi-bar-chart-line"></i></div>
@@ -371,6 +426,7 @@
           </div>
         </div>
 
+        <!-- Feature Card 3: Instant Results -->
         <div class="col-md-4">
           <div class="feature-card">
             <div class="feature-icon"><i class="bi bi-lightning-charge"></i></div>
@@ -386,10 +442,15 @@
     </div>
   </section>
 
-  <!-- ── Trusted Section + CTA ── -->
+  <!-- ============================================================
+       TRUST SECTION + CALL TO ACTION
+       Builds credibility and encourages action
+       ============================================================ -->
   <section class="trust-section">
     <div class="container">
       <div class="row g-5 align-items-center">
+        
+        <!-- LEFT COLUMN: Trust badges -->
         <div class="col-lg-6">
           <h2 style="font-size:1.9rem; font-weight:700; color:#fff; margin-bottom:0.6rem;">Trusted by Thousands</h2>
           <p style="color:#94A3B8; margin-bottom:2rem; font-size:0.92rem;">Our platform uses industry-leading security standards and transparent algorithms to ensure your data is protected and predictions are fair.</p>
@@ -417,6 +478,8 @@
             </li>
           </ul>
         </div>
+
+        <!-- RIGHT COLUMN: Call to Action Box -->
         <div class="col-lg-6">
           <div class="cta-box">
             <h3>Ready to get started?</h3>
@@ -430,29 +493,34 @@
     </div>
   </section>
 
- <!-- ── Meet the Developer ── -->
-<section class="dev-section">
-  <div class="container">
-    <h2 class="mb-4">Meet the Developer</h2>
-    
-    <img src="{{ url_for('static', filename='YouE_Award_Picture.jpeg') }}" 
-         alt="Profile Photo" 
-         style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(16,185,129,0.4); margin: 0 auto 1rem; display: block;">
-    
-
-    
-    <p class="dev-name" style="font-size: 1.8rem;">You E Kry</p>
-    <p class="dev-role" style="font-size: 1.1rem;">Computer Science Student</p>
-    <p class="dev-bio" style="font-size: 1.05rem; max-width: 650px;">Passionate about AI and Fintech, I built Finlytic to make loan prediction accessible and transparent for everyone. Combining machine learning with user-friendly design to revolutionize financial decision-making.</p>
-    <div class="dev-btns">
-      <a href="https://linkedin.com/" target="_blank" class="btn-dev btn-dev-dark" style="font-size: 1rem; padding: 0.8rem 1.8rem;">
-        <i class="bi bi-linkedin"></i> Connect on LinkedIn
-      </a>
-      <a href="https://youe168.github.io/youe-kry-portfolio/" target="_blank" class="btn-dev btn-dev-outline" style="font-size: 1rem; padding: 0.8rem 1.8rem;">
-        <i class="bi bi-github"></i> View Portfolio
-      </a>
+  <!-- ============================================================
+       MEET THE DEVELOPER SECTION
+       Personal branding and portfolio links
+       ============================================================ -->
+  <section class="dev-section">
+    <div class="container">
+      <h2 class="mb-4">Meet the Developer</h2>
+      
+      <!-- Profile Image from static folder -->
+      <img src="{{ url_for('static', filename='YouE_Award_Picture.jpeg') }}" 
+           alt="Profile Photo" 
+           style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(16,185,129,0.4); margin: 0 auto 1rem; display: block;">
+      
+      <p class="dev-name" style="font-size: 1.8rem;">You E Kry</p>
+      <p class="dev-role" style="font-size: 1.1rem;">Computer Science Student</p>
+      <p class="dev-bio" style="font-size: 1.05rem; max-width: 650px;">Passionate about AI and Fintech, I built Finlytic to make loan prediction accessible and transparent for everyone. Combining machine learning with user-friendly design to revolutionize financial decision-making.</p>
+      
+      <div class="dev-btns">
+        <!-- LinkedIn Link (opens in new tab) -->
+        <a href="https://linkedin.com/" target="_blank" class="btn-dev btn-dev-dark" style="font-size: 1rem; padding: 0.8rem 1.8rem;">
+          <i class="bi bi-linkedin"></i> Connect on LinkedIn
+        </a>
+        <!-- Portfolio Link (opens in new tab) -->
+        <a href="https://youe168.github.io/youe-kry-portfolio/" target="_blank" class="btn-dev btn-dev-outline" style="font-size: 1rem; padding: 0.8rem 1.8rem;">
+          <i class="bi bi-github"></i> View Portfolio
+        </a>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
 {% endblock %}

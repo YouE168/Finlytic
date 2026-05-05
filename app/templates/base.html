@@ -1,3 +1,13 @@
+<!-- 
+  ============================================================
+  FILE: base.html
+  PURPOSE: Master layout template for the entire Finlytic application
+  DESCRIPTION: Every other page (index, predict, dashboard, login, register)
+               inherits from this file. Contains navbar, footer, flash messages,
+               and global styles that appear on every page.
+  ============================================================
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,26 +15,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>{% block title %}Finlytic{% endblock %}</title>
 
-  <!-- Poppins Font -->
+  <!-- 
+    ============================================================
+    EXTERNAL LIBRARIES
+    ============================================================
+    - Poppins Font: Modern, clean Google Font used throughout the app
+    - Bootstrap 5: CSS framework for responsive layouts and components
+    - Bootstrap Icons: Icon library for buttons and visual elements
+  ============================================================
+  -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
 
   <style>
-    /* ── Core Variables ── */
+    /* 
+      ============================================================
+      CSS VARIABLES (THEME COLORS)
+      ============================================================
+      - Using CSS variables makes it easy to maintain consistent colors
+      - Change one value and it updates everywhere in the app
+    */
     :root {
-      --navy:   #0F172A;
-      --navy2:  #1E293B;
-      --emerald:#10B981;
-      --emerald-dark: #059669;
-      --text-muted: #94A3B8;
-      --white:  #FFFFFF;
+      --navy:   #0F172A;      /* Dark navy - main background color */
+      --navy2:  #1E293B;      /* Lighter navy - card backgrounds */
+      --emerald:#10B981;      /* Emerald green - primary accent color */
+      --emerald-dark: #059669; /* Darker green - hover states */
+      --text-muted: #94A3B8;   /* Gray - secondary text */
+      --white:  #FFFFFF;       /* White - main text color */
     }
 
+    /* Reset default browser margins/padding for consistent layout */
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    /* 
+      BODY STYLES
+      - Poppins font for modern look
+      - Flexbox layout ensures footer stays at bottom
+    */
     body {
       font-family: 'Poppins', sans-serif;
       background-color: var(--navy);
@@ -34,19 +62,25 @@
       flex-direction: column;
     }
 
+    /* Makes main content grow to fill space, pushing footer down */
     main { flex: 1; }
 
-    /* ── Navbar ── */
+    /* 
+      ============================================================
+      NAVBAR STYLES (Top Navigation Bar)
+      ============================================================
+    */
     .navbar {
       background-color: var(--navy);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08); /* Subtle separator */
       padding: 1rem 2rem;
-      position: sticky;
+      position: sticky;  /* Stays at top when scrolling */
       top: 0;
-      z-index: 1000;
-      backdrop-filter: blur(10px);
+      z-index: 1000;     /* Ensures navbar stays above other content */
+      backdrop-filter: blur(10px); /* Glassmorphism effect */
     }
 
+    /* Brand/Logo styling */
     .navbar-brand {
       display: flex;
       align-items: center;
@@ -57,6 +91,7 @@
       text-decoration: none;
     }
 
+    /* Green square behind the logo icon */
     .navbar-brand .logo-icon {
       background-color: var(--emerald);
       border-radius: 10px;
@@ -68,6 +103,7 @@
       font-size: 1.1rem;
     }
 
+    /* Navigation link styles */
     .navbar-nav .nav-link {
       color: var(--text-muted) !important;
       font-weight: 500;
@@ -77,11 +113,13 @@
       transition: color 0.2s;
     }
 
+    /* Hover effect - turns green */
     .navbar-nav .nav-link:hover,
     .navbar-nav .nav-link.active {
       color: var(--emerald) !important;
     }
 
+    /* Green underline for the active page link */
     .navbar-nav .nav-link.active::after {
       content: '';
       position: absolute;
@@ -93,6 +131,7 @@
       border-radius: 2px;
     }
 
+    /* Mobile hamburger menu button */
     .navbar-toggler {
       border: none;
       color: var(--white);
@@ -101,7 +140,12 @@
 
     .navbar-toggler:focus { box-shadow: none; }
 
-    /* ── Buttons ── */
+    /* 
+      ============================================================
+      BUTTON STYLES
+      ============================================================
+    */
+    /* Primary green button (Login, Register, Logout) */
     .btn-emerald {
       background-color: var(--emerald);
       color: var(--white);
@@ -115,9 +159,10 @@
     .btn-emerald:hover {
       background-color: var(--emerald-dark);
       color: var(--white);
-      transform: translateY(-1px);
+      transform: translateY(-1px); /* Slight lift effect */
     }
 
+    /* Outline button for secondary actions */
     .btn-outline-light-custom {
       background: transparent;
       color: var(--white);
@@ -134,7 +179,11 @@
       transform: translateY(-1px);
     }
 
-    /* ── Footer ── */
+    /* 
+      ============================================================
+      FOOTER STYLES
+      ============================================================
+    */
     footer {
       background-color: var(--navy);
       border-top: 1px solid rgba(255,255,255,0.08);
@@ -142,6 +191,7 @@
       margin-top: auto;
     }
 
+    /* Footer brand/logo */
     footer .footer-brand {
       display: flex;
       align-items: center;
@@ -163,6 +213,7 @@
       font-size: 1rem;
     }
 
+    /* Footer text and links */
     footer p, footer a {
       color: var(--text-muted);
       font-size: 0.88rem;
@@ -184,6 +235,7 @@
       margin-bottom: 1rem;
     }
 
+    /* Footer bottom row (copyright area) */
     footer .footer-bottom {
       border-top: 1px solid rgba(255,255,255,0.08);
       margin-top: 2rem;
@@ -200,6 +252,7 @@
       font-size: 0.82rem;
     }
 
+    /* Social media icon circles */
     footer .social-links a {
       display: inline-flex;
       align-items: center;
@@ -219,29 +272,48 @@
       color: var(--white);
     }
 
-    /* ── Flash Messages ── */
+    /* 
+      ============================================================
+      FLASH MESSAGES (Temporary notifications)
+      ============================================================
+      - Used for "Login successful", "Error: Invalid credentials", etc.
+      - Green for success, red for errors
+    */
     .alert {
       border-radius: 10px;
       font-size: 0.9rem;
       border: none;
     }
 
-    /* ── Scrollbar ── */
+    /* 
+      ============================================================
+      CUSTOM SCROLLBAR
+      ============================================================
+    */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: var(--navy); }
     ::-webkit-scrollbar-thumb { background: var(--navy2); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--emerald); }
   </style>
 
+  <!-- Child pages can add their own CSS here -->
   {% block extra_css %}{% endblock %}
 </head>
 
 <body>
 
-  <!-- ── Navbar ── -->
+  <!-- 
+    ============================================================
+    NAVIGATION BAR
+    ============================================================
+    - Shows on every page
+    - Links: Home, Apply ( Predict ), Dashboard
+    - Conditional links: Shows Logout if logged in, Login/Register if not
+  -->
   <nav class="navbar navbar-expand-lg">
     <div class="container">
 
+      <!-- Brand / Logo - Clicking returns to home page -->
       <a class="navbar-brand" href="{{ url_for('main.index') }}">
         <div class="logo-icon">
           <i class="bi bi-graph-up-arrow text-white"></i>
@@ -249,26 +321,39 @@
         Finlytic
       </a>
 
+      <!-- Mobile hamburger menu button -->
       <button class="navbar-toggler" type="button"
               data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <i class="bi bi-list text-white"></i>
       </button>
 
+      <!-- Navigation links container -->
       <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <ul class="navbar-nav align-items-center gap-1">
+          
+          <!-- Home Link - active class adds green underline when on this page -->
           <li class="nav-item">
             <a class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}"
                href="{{ url_for('main.index') }}">Home</a>
           </li>
+          
+          <!-- Apply/Predict Link -->
           <li class="nav-item">
             <a class="nav-link {% if request.endpoint == 'main.predict' %}active{% endif %}"
                href="{{ url_for('main.predict') }}">Apply</a>
           </li>
+          
+          <!-- Dashboard Link -->
           <li class="nav-item">
             <a class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}"
                href="{{ url_for('main.dashboard') }}">Dashboard</a>
           </li>
 
+          <!-- 
+            CONDITIONAL LINKS BASED ON LOGIN STATUS
+            - If user is logged in: Show Logout button
+            - If user is NOT logged in: Show Login and Register buttons
+          -->
           {% if current_user.is_authenticated %}
             <li class="nav-item ms-2">
               <a class="btn btn-emerald" href="{{ url_for('auth.logout') }}">
@@ -290,7 +375,14 @@
     </div>
   </nav>
 
-  <!-- ── Flash Messages ── -->
+  <!-- 
+    ============================================================
+    FLASH MESSAGES
+    ============================================================
+    - Displays temporary notifications from Flask backend
+    - Examples: "Login successful", "Invalid email or password"
+    - User can dismiss by clicking the X button
+  -->
   <div class="container mt-3">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -305,17 +397,29 @@
     {% endwith %}
   </div>
 
-  <!-- ── Page Content ── -->
+  <!-- 
+    ============================================================
+    MAIN PAGE CONTENT
+    ============================================================
+    - This is the PLACEHOLDER where child pages inject their content
+    - index.html, predict.html, dashboard.html, etc. all go here
+  -->
   <main>
     {% block content %}{% endblock %}
   </main>
 
-  <!-- ── Footer ── -->
+  <!-- 
+    ============================================================
+    FOOTER
+    ============================================================
+    - Appears on every page
+    - Contains quick links, account links, and developer info
+  -->
   <footer>
     <div class="container">
       <div class="row">
 
-        <!-- Brand col -->
+        <!-- Column 1: Brand Information -->
         <div class="col-lg-4 mb-4">
           <div class="footer-brand">
             <div class="logo-icon">
@@ -326,7 +430,7 @@
           <p>Smart Lending, Powered by Data. Making loan decisions faster and smarter with AI-driven analytics.</p>
         </div>
 
-        <!-- Quick Links -->
+        <!-- Column 2: Quick Links -->
         <div class="col-lg-2 col-6 mb-4">
           <h6>Quick Links</h6>
           <a href="{{ url_for('main.index') }}">Home</a>
@@ -334,14 +438,14 @@
           <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
         </div>
 
-        <!-- Account -->
+        <!-- Column 3: Account Links -->
         <div class="col-lg-2 col-6 mb-4">
           <h6>Account</h6>
           <a href="{{ url_for('auth.login') }}">Login</a>
           <a href="{{ url_for('auth.register') }}">Register</a>
         </div>
 
-        <!-- Built by -->
+        <!-- Column 4: Developer Info -->
         <div class="col-lg-4 mb-4">
           <h6>Built By</h6>
           <p class="mb-1">You E Kry — Computer Science Student</p>
@@ -358,7 +462,7 @@
 
       </div>
 
-      <!-- Footer Bottom -->
+      <!-- Footer Bottom Row (Copyright) -->
       <div class="footer-bottom">
         <p>© 2025 Finlytic. Built by <span style="color: var(--emerald);">You E Kry</span></p>
         <p>AI-Powered Loan Prediction Platform</p>
@@ -367,8 +471,16 @@
     </div>
   </footer>
 
-  <!-- Bootstrap JS -->
+  <!-- 
+    ============================================================
+    BOOTSTRAP JAVASCRIPT
+    ============================================================
+    - Required for interactive components (hamburger menu, etc.)
+    - Without this, the mobile menu won't work
+  -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Child pages can add their own JavaScript here -->
   {% block extra_js %}{% endblock %}
 
 </body>

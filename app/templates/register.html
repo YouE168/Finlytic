@@ -1,25 +1,44 @@
+<!-- 
+  FILE: register.html
+  PURPOSE: User Registration Page - Allows new users to create an account
+  DESCRIPTION: Displays a centered form with name, email, and password fields.
+               Includes password confirmation validation.
+               After successful registration, users are redirected to login page.
+-->
+
 {% extends 'base.html' %}
+
+<!-- Override the page title in the browser tab -->
 {% block title %}Register — Finlytic{% endblock %}
 
+<!-- Add page-specific CSS styles -->
 {% block extra_css %}
 <style>
+  /* ============================================================
+     REGISTRATION PAGE STYLES
+     Centered card layout with form fields for new user signup
+     ============================================================ */
+
+  /* Wrapper that centers the registration card vertically and horizontally */
   .auth-wrapper {
-    min-height: calc(100vh - 80px);
+    min-height: calc(100vh - 80px);  /* Full viewport height minus navbar space */
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: center;      /* Vertically centers the card */
+    justify-content: center;  /* Horizontally centers the card */
     padding: 2rem 1rem;
   }
 
+  /* Main Registration Card Container */
   .auth-card {
-    background: #1E293B;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
+    background: #1E293B;                    /* Dark card background */
+    border: 1px solid rgba(255,255,255,0.08); /* Subtle border */
+    border-radius: 16px;                    /* Rounded corners */
     padding: 2.5rem;
     width: 100%;
-    max-width: 460px;
+    max-width: 460px;                       /* Card width limit */
   }
 
+  /* Logo Circle at top of card */
   .auth-logo {
     background-color: #0F172A;
     border-radius: 14px;
@@ -28,10 +47,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 1.5rem;
+    margin: 0 auto 1.5rem;    /* Centers horizontally with bottom margin */
     font-size: 1.5rem;
   }
 
+  /* Heading */
   .auth-card h2 {
     font-size: 1.6rem;
     font-weight: 700;
@@ -40,6 +60,7 @@
     margin-bottom: 0.4rem;
   }
 
+  /* Subtitle text */
   .auth-card .subtitle {
     text-align: center;
     color: #94A3B8;
@@ -47,6 +68,7 @@
     margin-bottom: 2rem;
   }
 
+  /* Form field labels */
   .form-label {
     color: #CBD5E1;
     font-size: 0.88rem;
@@ -54,27 +76,30 @@
     margin-bottom: 0.4rem;
   }
 
+  /* Container for input with icon inside */
   .input-group-custom {
     position: relative;
     margin-bottom: 1.2rem;
   }
 
+  /* Icon inside input field (person, envelope, lock) */
   .input-icon {
     position: absolute;
     left: 14px;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-50%);  /* Vertically centers the icon */
     color: #64748B;
     font-size: 1rem;
-    z-index: 2;
+    z-index: 2;  /* Keeps icon above the input background */
   }
 
+  /* Custom input field styling */
   .form-control-custom {
     width: 100%;
-    background: #0F172A;
+    background: #0F172A;                     /* Dark input background */
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 10px;
-    padding: 0.75rem 1rem 0.75rem 2.8rem;
+    padding: 0.75rem 1rem 0.75rem 2.8rem;   /* Extra left padding for icon */
     color: #fff;
     font-size: 0.92rem;
     font-family: 'Poppins', sans-serif;
@@ -82,16 +107,19 @@
     outline: none;
   }
 
+  /* Placeholder text color */
   .form-control-custom::placeholder { color: #475569; }
 
+  /* Focus effect - green border when user clicks into input */
   .form-control-custom:focus {
     border-color: #10B981;
     box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
   }
 
+  /* Submit button (Create Account) */
   .btn-submit {
     width: 100%;
-    background: #10B981;
+    background: #10B981;        /* Emerald green */
     color: #fff;
     border: none;
     border-radius: 10px;
@@ -105,10 +133,11 @@
   }
 
   .btn-submit:hover {
-    background: #059669;
-    transform: translateY(-1px);
+    background: #059669;        /* Darker green on hover */
+    transform: translateY(-1px); /* Slight lift effect */
   }
 
+  /* Footer text with link to Login page */
   .auth-footer {
     text-align: center;
     margin-top: 1.5rem;
@@ -124,8 +153,9 @@
 
   .auth-footer a:hover { text-decoration: underline; }
 
+  /* Error message styling for form validation */
   .field-error {
-    color: #F87171;
+    color: #F87171;           /* Red color for errors */
     font-size: 0.8rem;
     margin-top: 0.3rem;
   }
@@ -136,68 +166,94 @@
 <div class="auth-wrapper">
   <div class="auth-card">
 
-    <!-- Logo -->
+    <!-- Logo Section - Shows Finlytic icon -->
     <div class="auth-logo">
       <i class="bi bi-graph-up-arrow text-white"></i>
     </div>
 
+    <!-- Heading and Subtitle -->
     <h2>Create an account</h2>
     <p class="subtitle">Get started with Finlytic today</p>
 
+    <!-- 
+      REGISTRATION FORM
+      ============================================================
+      - method="POST": Sends data securely (not visible in URL)
+      - action="{{ url_for('auth.register') }}": Submits to the register route
+      - form.hidden_tag(): Adds CSRF token for security
+    -->
     <form method="POST" action="{{ url_for('auth.register') }}">
       {{ form.hidden_tag() }}
 
-      <!-- Full Name -->
+      <!-- ============================================
+           FULL NAME FIELD
+           ============================================ -->
       <div>
         <label class="form-label">Full Name</label>
         <div class="input-group-custom">
+          <!-- Person icon inside the input field -->
           <i class="bi bi-person input-icon"></i>
           {{ form.username(class="form-control-custom", placeholder="John Doe") }}
         </div>
+        <!-- Display validation errors if any (e.g., "Username is required") -->
         {% for err in form.username.errors %}
           <p class="field-error"><i class="bi bi-exclamation-circle me-1"></i>{{ err }}</p>
         {% endfor %}
       </div>
 
-      <!-- Email -->
+      <!-- ============================================
+           EMAIL FIELD
+           ============================================ -->
       <div>
         <label class="form-label">Email</label>
         <div class="input-group-custom">
+          <!-- Envelope icon inside the input field -->
           <i class="bi bi-envelope input-icon"></i>
           {{ form.email(class="form-control-custom", placeholder="name@example.com") }}
         </div>
+        <!-- Display validation errors if any (e.g., "Invalid email address") -->
         {% for err in form.email.errors %}
           <p class="field-error"><i class="bi bi-exclamation-circle me-1"></i>{{ err }}</p>
         {% endfor %}
       </div>
 
-      <!-- Password -->
+      <!-- ============================================
+           PASSWORD FIELD
+           ============================================ -->
       <div>
         <label class="form-label">Password</label>
         <div class="input-group-custom">
+          <!-- Lock icon inside the input field -->
           <i class="bi bi-lock input-icon"></i>
           {{ form.password(class="form-control-custom", placeholder="Create a password") }}
         </div>
+        <!-- Display validation errors if any -->
         {% for err in form.password.errors %}
           <p class="field-error"><i class="bi bi-exclamation-circle me-1"></i>{{ err }}</p>
         {% endfor %}
       </div>
 
-      <!-- Confirm Password -->
+      <!-- ============================================
+           CONFIRM PASSWORD FIELD
+           ============================================ -->
       <div>
         <label class="form-label">Confirm Password</label>
         <div class="input-group-custom">
+          <!-- Lock-fill icon inside the input field -->
           <i class="bi bi-lock-fill input-icon"></i>
           {{ form.confirm_password(class="form-control-custom", placeholder="Confirm your password") }}
         </div>
+        <!-- Display validation errors if any (e.g., "Passwords must match") -->
         {% for err in form.confirm_password.errors %}
           <p class="field-error"><i class="bi bi-exclamation-circle me-1"></i>{{ err }}</p>
         {% endfor %}
       </div>
 
+      <!-- Submit Button -->
       <button type="submit" class="btn-submit">Create Account</button>
     </form>
 
+    <!-- Login Link - For users who already have an account -->
     <div class="auth-footer">
       Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a>
     </div>

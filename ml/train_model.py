@@ -1,5 +1,4 @@
-# train_model.py – The AI/ML heart of Finlytic
-# This script is run ONCE (offline) to train the loan prediction model
+# train_model.py: The AI/ML heart of Finlytic
 # It reads the Kaggle dataset, preprocesses it, trains two models,
 # picks the best one, and saves it as model.pkl for the web app to use
 

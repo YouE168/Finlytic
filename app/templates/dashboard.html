@@ -1,13 +1,26 @@
+<!-- 
+  FILE: dashboard.html
+  PURPOSE: Analytics Dashboard - Shows statistics, charts, and model performance metrics
+  DESCRIPTION: Displays key metrics about loan applications, interactive charts using Chart.js,
+               and machine learning model performance (Precision, Recall, F1 Score)
+-->
+
 {% extends 'base.html' %}
+
 {% block title %}Dashboard — Finlytic{% endblock %}
 
 {% block extra_css %}
 <style>
+  /* ============================================================
+     MAIN CONTAINER
+     ============================================================ */
   .dashboard-wrapper {
     padding: 2.5rem 0 4rem;
   }
 
-  /* ── Page Header ── */
+  /* ============================================================
+     PAGE HEADER STYLES
+     ============================================================ */
   .page-header { margin-bottom: 2rem; }
   .page-header h1 {
     font-size: 2rem;
@@ -17,7 +30,11 @@
   }
   .page-header p { color: #94A3B8; font-size: 0.95rem; }
 
-  /* ── Stat Cards ── */
+  /* ============================================================
+     STATISTICS CARDS
+     Shows 4 key metrics: Total Applications, Approval Rate, 
+     Rejection Rate, Model Accuracy
+     ============================================================ */
   .stat-card {
     background: #1E293B;
     border: 1px solid rgba(255,255,255,0.07);
@@ -29,6 +46,8 @@
     height: 100%;
     transition: transform 0.2s, border-color 0.2s;
   }
+  
+  /* Hover effect - card lifts up and shows green border */
   .stat-card:hover {
     transform: translateY(-2px);
     border-color: rgba(16, 185, 129, 0.3);
@@ -48,6 +67,7 @@
     margin-bottom: 0.4rem;
   }
 
+  /* Trend indicators (up = green, down = red) */
   .stat-card .stat-change {
     font-size: 0.78rem;
     font-weight: 500;
@@ -56,6 +76,7 @@
   .stat-card .stat-change.up { color: #10B981; }
   .stat-card .stat-change.down { color: #F87171; }
 
+  /* Icon container on the right side of each card */
   .stat-icon {
     background: rgba(255,255,255,0.06);
     border-radius: 10px;
@@ -69,7 +90,10 @@
     flex-shrink: 0;
   }
 
-  /* ── Chart Cards ── */
+  /* ============================================================
+     CHART CARDS
+     Contains interactive charts (Donut, Bar, Horizontal Bar)
+     ============================================================ */
   .chart-card {
     background: #1E293B;
     border: 1px solid rgba(255,255,255,0.07);
@@ -78,6 +102,7 @@
     height: 100%;
     transition: border-color 0.2s;
   }
+  
   .chart-card:hover {
     border-color: rgba(16, 185, 129, 0.2);
   }
@@ -95,6 +120,7 @@
     margin-bottom: 1.2rem;
   }
 
+  /* Color legend below charts */
   .chart-legend {
     display: flex;
     gap: 1.2rem;
@@ -111,7 +137,10 @@
     margin-right: 5px;
   }
 
-  /* ── Metric Cards (Precision/Recall/F1) ── */
+  /* ============================================================
+     MODEL PERFORMANCE METRIC CARDS
+     Shows Precision, Recall, and F1 Score with progress bars
+     ============================================================ */
   .metric-card {
     background: #1E293B;
     border: 1px solid rgba(255,255,255,0.07);
@@ -139,11 +168,12 @@
     margin-bottom: 0.8rem;
   }
   
-  /* Different colors for each metric */
+  /* Color-coded metric values for visual distinction */
   .metric-card:nth-child(1) .metric-value { color: #3B82F6; }  /* Precision - Blue */
   .metric-card:nth-child(2) .metric-value { color: #10B981; }  /* Recall - Green */
   .metric-card:nth-child(3) .metric-value { color: #8B5CF6; }  /* F1 Score - Purple */
 
+  /* Progress bar background track */
   .metric-bar-bg {
     background: rgba(255,255,255,0.07);
     border-radius: 99px;
@@ -151,16 +181,19 @@
     overflow: hidden;
   }
 
+  /* Progress bar fill (animated) */
   .metric-bar-fill {
     height: 100%;
     border-radius: 99px;
     transition: width 1s ease;
   }
-  .metric-card:nth-child(1) .metric-bar-fill { background: #3B82F6; }  /* Blue */
-  .metric-card:nth-child(2) .metric-bar-fill { background: #10B981; }  /* Green */
-  .metric-card:nth-child(3) .metric-bar-fill { background: #8B5CF6; }  /* Purple */
+  
+  /* Color-coded progress bars */
+  .metric-card:nth-child(1) .metric-bar-fill { background: #3B82F6; }
+  .metric-card:nth-child(2) .metric-bar-fill { background: #10B981; }
+  .metric-card:nth-child(3) .metric-bar-fill { background: #8B5CF6; }
 
-  /* ── Section titles ── */
+  /* Section title */
   .section-title {
     font-size: 1rem;
     font-weight: 600;
@@ -179,8 +212,10 @@
     <p>Real-time insights into loan predictions and model performance</p>
   </div>
 
-  <!-- ── Stat Cards Row ── -->
+  <!-- ROW 1: STATISTICS CARDS -->
   <div class="row g-3 mb-4">
+    
+    <!-- Card 1: Total Applications -->
     <div class="col-6 col-lg-3">
       <div class="stat-card">
         <div>
@@ -194,6 +229,7 @@
       </div>
     </div>
 
+    <!-- Card 2: Approval Rate -->
     <div class="col-6 col-lg-3">
       <div class="stat-card">
         <div>
@@ -207,6 +243,7 @@
       </div>
     </div>
 
+    <!-- Card 3: Rejection Rate -->
     <div class="col-6 col-lg-3">
       <div class="stat-card">
         <div>
@@ -220,6 +257,7 @@
       </div>
     </div>
 
+    <!-- Card 4: Model Accuracy -->
     <div class="col-6 col-lg-3">
       <div class="stat-card">
         <div>
@@ -234,10 +272,10 @@
     </div>
   </div>
 
-  <!-- ── Charts Row 1: Donut + Bar ── -->
+  <!-- ROW 2: CHARTS (Donut Chart + Bar Chart) -->
   <div class="row g-3 mb-4">
 
-    <!-- Approval Rate Donut -->
+    <!-- Chart 1: Approval Rate Donut Chart -->
     <div class="col-lg-5">
       <div class="chart-card">
         <p class="chart-title">Approval Rate Distribution</p>
@@ -252,7 +290,7 @@
       </div>
     </div>
 
-    <!-- Income vs Approval Bar -->
+    <!-- Chart 2: Income vs Approval Bar Chart -->
     <div class="col-lg-7">
       <div class="chart-card">
         <p class="chart-title">Income vs Approval</p>
@@ -268,7 +306,7 @@
     </div>
   </div>
 
-  <!-- ── Charts Row 2: Credit Score Distribution ── -->
+  <!-- ROW 3: Credit Score Distribution (Horizontal Bar Chart) -->
   <div class="row g-3 mb-4">
     <div class="col-12">
       <div class="chart-card">
@@ -281,12 +319,13 @@
     </div>
   </div>
 
-  <!-- ── Model Performance Metrics ── -->
+  <!-- ROW 4: MODEL PERFORMANCE METRICS -->
   <div class="row g-3">
     <div class="col-12 mb-1">
       <p class="section-title">Model Performance Metrics</p>
     </div>
 
+    <!-- Precision Card -->
     <div class="col-md-4">
       <div class="metric-card">
         <p class="metric-label">Precision</p>
@@ -298,6 +337,7 @@
       </div>
     </div>
 
+    <!-- Recall Card -->
     <div class="col-md-4">
       <div class="metric-card">
         <p class="metric-label">Recall</p>
@@ -309,6 +349,7 @@
       </div>
     </div>
 
+    <!-- F1 Score Card -->
     <div class="col-md-4">
       <div class="metric-card">
         <p class="metric-label">F1 Score</p>
@@ -327,7 +368,7 @@
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-{# ── Inject Flask data as plain JSON into hidden vars ── #}
+<!-- Inject Flask data as JSON -->
 <script id="chart-data" type="application/json">
 {
   "approved":        {{ chart_data.approved        | default(68.9) }},
@@ -340,26 +381,24 @@
 </script>
 
 <script>
-  // Read injected data safely
+  // Read injected data from JSON
   const d = JSON.parse(document.getElementById('chart-data').textContent);
   
-  // Color Palette - More vibrant colors
+  // Color Palette for charts
   const colors = {
-    approved: '#10B981',      // Emerald Green
-    rejected: '#EF4444',      // Red
-    rejectedBar: '#F59E0B',   // Amber for income chart rejection
-    approvedLight: '#34D399',  // Lighter green
-    creditGood: '#10B981',    // Green for good credit
-    creditBad: '#F87171',     // Light red for bad credit
-    precision: '#3B82F6',     // Blue
-    recall: '#10B981',        // Green
-    f1: '#8B5CF6'             // Purple
+    approved: '#10B981',
+    rejected: '#EF4444',
+    rejectedBar: '#F59E0B',
+    approvedLight: '#34D399',
+    creditGood: '#10B981',
+    creditBad: '#F87171'
   };
 
+  // Global Chart.js configuration
   Chart.defaults.color = '#94A3B8';
   Chart.defaults.font.family = 'Poppins';
 
-  // ── Donut Chart (Approved vs Rejected) ──
+  // CHART 1: DONUT CHART (Approved vs Rejected)
   new Chart(document.getElementById('donutChart'), {
     type: 'doughnut',
     data: {
@@ -389,7 +428,7 @@
     }
   });
 
-  // ── Income vs Approval Bar Chart ──
+  // CHART 2: BAR CHART (Income vs Approval)
   new Chart(document.getElementById('incomeChart'), {
     type: 'bar',
     data: {
@@ -437,7 +476,7 @@
     }
   });
 
-  // ── Credit Score Distribution Horizontal Bar ──
+  // CHART 3: HORIZONTAL BAR CHART (Credit History Distribution)
   new Chart(document.getElementById('creditChart'), {
     type: 'bar',
     data: {

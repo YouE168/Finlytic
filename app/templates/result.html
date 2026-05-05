@@ -1,65 +1,92 @@
+<!-- 
+  FILE: result.html
+  PURPOSE: Prediction Results Page - Shows the AI model's loan decision
+  DESCRIPTION: Displays whether the loan is Approved or Rejected, along with
+               the confidence score (probability). Shows a summary of the
+               user's application and provides buttons for next actions.
+               This page is displayed after the user submits the form.
+-->
+
 {% extends 'base.html' %}
+
+<!-- Override the page title in the browser tab -->
 {% block title %}Result — Finlytic{% endblock %}
 
+<!-- Add page-specific CSS styles -->
 {% block extra_css %}
 <style>
+  /* ============================================================
+     RESULTS PAGE STYLES
+     Shows the AI prediction outcome to the user
+     ============================================================ */
+
+  /* Page Wrapper - Centers content vertically and horizontally */
   .result-wrapper {
-    min-height: calc(100vh - 80px);
+    min-height: calc(100vh - 80px);  /* Full viewport height minus navbar space */
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: center;      /* Vertically centers the card */
+    justify-content: center;  /* Horizontally centers the card */
     padding: 3rem 1rem;
   }
 
+  /* Main Result Card - Container for all result content */
   .result-card {
-    background: #1E293B;
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 20px;
+    background: #1E293B;                    /* Dark card background */
+    border: 1px solid rgba(255,255,255,0.07); /* Subtle border */
+    border-radius: 20px;                    /* Rounded corners */
     padding: 3rem 2.5rem;
-    max-width: 520px;
+    max-width: 520px;                       /* Card width limit */
     width: 100%;
-    text-align: center;
+    text-align: center;                     /* Center all text inside */
   }
 
-  /* ── Status Icon ── */
+  /* ============================================================
+     STATUS ICON - Large circular icon (Checkmark or X)
+     Changes color based on approval/rejection
+     ============================================================ */
   .status-icon {
     width: 80px;
     height: 80px;
-    border-radius: 50%;
+    border-radius: 50%;           /* Makes it a perfect circle */
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 2.2rem;
-    margin: 0 auto 1.5rem;
+    margin: 0 auto 1.5rem;        /* Centers horizontally with bottom margin */
   }
 
+  /* Green theme for Approved status */
   .status-icon.approved {
-    background: rgba(16,185,129,0.15);
-    color: #10B981;
+    background: rgba(16,185,129,0.15);  /* Semi-transparent green */
+    color: #10B981;                      /* Solid green icon */
     border: 2px solid rgba(16,185,129,0.3);
   }
 
+  /* Red theme for Rejected status */
   .status-icon.rejected {
-    background: rgba(248,113,113,0.12);
-    color: #F87171;
+    background: rgba(248,113,113,0.12);  /* Semi-transparent red */
+    color: #F87171;                       /* Solid red icon */
     border: 2px solid rgba(248,113,113,0.3);
   }
 
-  /* ── Status Badge ── */
+  /* ============================================================
+     STATUS BADGE - Small pill-shaped label
+     ============================================================ */
   .status-badge {
     display: inline-block;
-    border-radius: 99px;
+    border-radius: 99px;           /* Pill shape */
     padding: 0.4rem 1.4rem;
     font-size: 0.85rem;
     font-weight: 700;
     letter-spacing: 0.05em;
-    text-transform: uppercase;
+    text-transform: uppercase;     /* Makes text ALL CAPS */
     margin-bottom: 1rem;
   }
 
   .status-badge.approved { background: rgba(16,185,129,0.15); color: #10B981; }
   .status-badge.rejected { background: rgba(248,113,113,0.12); color: #F87171; }
 
+  /* Heading styling */
   .result-card h2 {
     font-size: 1.7rem;
     font-weight: 700;
@@ -67,6 +94,7 @@
     margin-bottom: 0.5rem;
   }
 
+  /* Result message paragraph */
   .result-card .result-msg {
     color: #94A3B8;
     font-size: 0.9rem;
@@ -74,12 +102,16 @@
     margin-bottom: 2rem;
   }
 
-  /* ── Probability Bar ── */
+  /* ============================================================
+     CONFIDENCE SCORE PROGRESS BAR
+     Shows how confident the AI is in its prediction
+     ============================================================ */
   .prob-section { margin-bottom: 2rem; }
 
+  /* Label row with "Confidence Score" and percentage value */
   .prob-label {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between;  /* Pushes left and right apart */
     margin-bottom: 0.6rem;
     font-size: 0.85rem;
   }
@@ -87,45 +119,68 @@
   .prob-label span:first-child { color: #CBD5E1; font-weight: 500; }
   .prob-label span:last-child  { font-weight: 700; color: #10B981; }
 
+  /* Background track of progress bar */
   .prob-bar-bg {
     background: rgba(255,255,255,0.07);
     border-radius: 99px;
     height: 10px;
-    overflow: hidden;
+    overflow: hidden;  /* Keeps the fill bar inside the rounded corners */
   }
 
+  /* Filled portion of progress bar (animated) */
   .prob-bar-fill {
     height: 100%;
     border-radius: 99px;
-    transition: width 1.2s ease;
+    transition: width 1.2s ease;  /* Smooth animation when page loads */
   }
 
+  /* Green gradient for Approved predictions */
   .prob-bar-fill.approved { background: linear-gradient(90deg, #059669, #10B981); }
+  
+  /* Red gradient for Rejected predictions */
   .prob-bar-fill.rejected { background: linear-gradient(90deg, #DC2626, #F87171); }
 
-  /* ── Summary Grid ── */
+  /* ============================================================
+     SUMMARY GRID - Shows key application details
+     ============================================================ */
   .summary-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;  /* Two equal columns */
     gap: 0.8rem;
     margin-bottom: 2rem;
-    text-align: left;
+    text-align: left;  /* Override centered text, align labels to left */
   }
 
+  /* Each summary item card */
   .summary-item {
-    background: #0F172A;
+    background: #0F172A;  /* Darker background than main card */
     border-radius: 10px;
     padding: 0.8rem 1rem;
   }
 
-  .summary-item .s-label { color: #64748B; font-size: 0.75rem; margin-bottom: 0.2rem; }
-  .summary-item .s-value { color: #fff; font-size: 0.9rem; font-weight: 600; }
+  .summary-item .s-label { 
+    color: #64748B; 
+    font-size: 0.75rem; 
+    margin-bottom: 0.2rem; 
+  }
+  
+  .summary-item .s-value { 
+    color: #fff; 
+    font-size: 0.9rem; 
+    font-weight: 600; 
+  }
 
-  /* ── Action Buttons ── */
-  .result-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+  /* ============================================================
+     ACTION BUTTONS - New Application & Dashboard
+     ============================================================ */
+  .result-actions { 
+    display: flex; 
+    gap: 1rem; 
+    flex-wrap: wrap;  /* Buttons wrap on small screens */
+  }
 
   .btn-action {
-    flex: 1;
+    flex: 1;                      /* Both buttons take equal width */
     border-radius: 10px;
     padding: 0.75rem;
     font-size: 0.88rem;
@@ -142,20 +197,29 @@
     cursor: pointer;
   }
 
+  /* Primary button (Green) - goes to Dashboard */
   .btn-action-primary {
     background: #10B981;
     color: #fff;
   }
 
-  .btn-action-primary:hover { background: #059669; color: #fff; transform: translateY(-1px); }
+  .btn-action-primary:hover { 
+    background: #059669; 
+    color: #fff; 
+    transform: translateY(-1px);  /* Slight lift on hover */
+  }
 
+  /* Secondary button (Ghost/Outline) - goes to new application */
   .btn-action-secondary {
     background: rgba(255,255,255,0.06);
     color: #fff;
     border: 1px solid rgba(255,255,255,0.1);
   }
 
-  .btn-action-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .btn-action-secondary:hover { 
+    background: rgba(255,255,255,0.1); 
+    color: #fff; 
+  }
 </style>
 {% endblock %}
 
@@ -163,17 +227,25 @@
 <div class="result-wrapper">
   <div class="result-card">
 
-    <!-- Status Icon -->
+    <!-- ============================================================
+         STATUS ICON - Shows checkmark (✅) or X (❌)
+         Dynamically changes class based on prediction result
+         ============================================================ -->
     <div class="status-icon {{ 'approved' if result == 'Approved' else 'rejected' }}">
       <i class="bi bi-{{ 'check-lg' if result == 'Approved' else 'x-lg' }}"></i>
     </div>
 
-    <!-- Badge -->
+    <!-- ============================================================
+         STATUS BADGE - Small pill showing APPROVED/REJECTED
+         ============================================================ -->
     <div class="status-badge {{ 'approved' if result == 'Approved' else 'rejected' }}">
       {{ result }}
     </div>
 
-    <!-- Heading -->
+    <!-- ============================================================
+         HEADING AND RESULT MESSAGE
+         Different message based on approval status
+         ============================================================ -->
     <h2>Loan {{ result }}</h2>
     <p class="result-msg">
       {% if result == 'Approved' %}
@@ -183,7 +255,10 @@
       {% endif %}
     </p>
 
-    <!-- Probability Bar -->
+    <!-- ============================================================
+         CONFIDENCE SCORE PROGRESS BAR
+         Shows AI confidence level (0-100%)
+         ============================================================ -->
     <div class="prob-section">
       <div class="prob-label">
         <span>Confidence Score</span>
@@ -196,7 +271,10 @@
       </div>
     </div>
 
-    <!-- Summary Grid -->
+    <!-- ============================================================
+         APPLICATION SUMMARY GRID
+         Shows key information from the user's application
+         ============================================================ -->
     <div class="summary-grid">
       <div class="summary-item">
         <p class="s-label">Applicant Income</p>
@@ -216,7 +294,11 @@
       </div>
     </div>
 
-    <!-- Action Buttons -->
+    <!-- ============================================================
+         ACTION BUTTONS
+         - New Application: Go back to prediction form
+         - View Dashboard: Go to analytics dashboard
+         ============================================================ -->
     <div class="result-actions">
       <a href="{{ url_for('main.predict') }}" class="btn-action btn-action-secondary">
         <i class="bi bi-arrow-left"></i> New Application
